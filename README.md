@@ -17,7 +17,10 @@ SceneForge AI is an enterprise-grade agentic 3D procedural synthesis platform. I
 - **Dual-Mode Geometry Pipeline**:
   - **Blender 4.2 LTS Headless**: High-fidelity procedural mesh lofting and Cycles/EEVEE Principled BSDF PBR shaders.
   - **Standalone Pure-Python Engine Fallback**: Mathematical parametric mesh generation and direct glTF 2.0 Binary (`.glb`) compilation for instant, zero-friction local development without Blender.
-- **Interactive Three.js Studio**: Real-time OrbitControls 3D viewport with PBR lighting, live agent reasoning trace, and GLB/OBJ/STL asset export.
+- **Interactive Three.js Studio**: Real-time OrbitControls 3D viewport with PBR lighting, Camera view presets (ISO, Front, Side, Top), Wireframe mode toggle, Auto-orbiting, Viewport snapshot capture, Mesh stats HUD, and GLB/OBJ/STL asset export dialog.
+- **Scene Hierarchy & Property Inspector**: Component tree displaying all scene meshes, transforms, parametric dimensions, and active PBR materials.
+- **Scene Versioning Graph**: Visual $v_1 \to v_2 \to \dots \to v_n$ iteration tree with instant rollback and branch switching.
+- **Agent Execution Audit Telemetry**: Full step-by-step trace showing user prompt, LLM reasoning, MCP tool calls, parameter validations, and automated self-repair iterations.
 - **Iterative Scene Editing**: Modify existing models via incremental prompts (e.g., *"Make it 20% longer and add a swimming platform"*).
 
 ---
@@ -136,4 +139,4 @@ docker compose up --build
 | **Successful GLB Export** | >95% | **100%** (Dual-mode engine pass) |
 | **Tool Execution Accuracy** | >95% | **100%** (Automated lifecycle suite) |
 | **Geometry Manifold Rate** | >90% | **100%** (Validated 0 non-manifold edges) |
-| **Unit & Integration Tests** | 100% | **8 / 8 Passed** |
+| **Unit & Integration Tests** | 100% | **20 / 20 Passed** |
