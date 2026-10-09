@@ -61,7 +61,12 @@ services:
       - "8000:8000"
     volumes:
       - ./backend:/app/backend
+      - ./agent:/app/agent
       - ./shared:/app/shared
+      - ./mcp-server:/app/mcp-server
+      - ./mcp-server:/app/mcp_server
+      - ./blender-worker:/app/blender-worker
+      - ./blender-worker:/app/blender_worker
       - ./storage:/app/storage
     networks:
       - sceneforge-net
@@ -77,12 +82,14 @@ services:
     environment:
       REDIS_URL: redis://redis:6379/0
       STORAGE_DIR: /app/storage
-      BLENDER_EXECUTABLE: /usr/local/blender/blender
+      BLENDER_EXECUTABLE: /usr/local/bin/blender
     ports:
       - "8001:8001"
     volumes:
       - ./mcp-server:/app/mcp-server
+      - ./mcp-server:/app/mcp_server
       - ./blender-worker:/app/blender-worker
+      - ./blender-worker:/app/blender_worker
       - ./shared:/app/shared
       - ./storage:/app/storage
     networks:
@@ -97,6 +104,7 @@ services:
     ports:
       - "3000:3000"
     environment:
+      - BACKEND_URL=http://backend:8000
       - VITE_API_BASE_URL=http://localhost:8000
       - VITE_WS_BASE_URL=ws://localhost:8000/api/v1/ws
     volumes:

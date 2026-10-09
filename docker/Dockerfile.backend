@@ -12,6 +12,11 @@ RUN pip install --no-cache-dir -r /app/backend/requirements.txt
 
 COPY shared /app/shared
 COPY backend /app/backend
+COPY agent /app/agent
+COPY mcp-server /app/mcp-server
+COPY mcp-server /app/mcp_server
+COPY blender-worker /app/blender-worker
+COPY blender-worker /app/blender_worker
 COPY storage /app/storage
 
 ENV PYTHONPATH=/app

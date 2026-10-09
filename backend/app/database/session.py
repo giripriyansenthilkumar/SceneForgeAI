@@ -49,5 +49,6 @@ async def get_db() -> AsyncGenerator[AsyncSession, None]:
 
 async def init_db():
     """Initializes all database tables automatically."""
+    import backend.app.models  # noqa: F401 - Register models with Base.metadata
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
