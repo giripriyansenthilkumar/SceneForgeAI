@@ -11,15 +11,33 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
+from contextlib import asynccontextmanager
 from backend.app.config import settings
+from backend.app.database.session import init_db
+from backend.app.api.v1.auth import router as auth_router
+from backend.app.api.v1.projects import router as projects_router
 from shared.scene_schema import get_default_yacht_specification, SceneSpecification
 from blender_worker.runner import execute_scene_generation
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Initialize database tables on startup
+    try:
+        await init_db()
+    except Exception as e:
+        print(f"[SceneForge DB] Warning: init_db encountered: {e}")
+    yield
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
     version=settings.VERSION,
-    description="Agentic 3D Procedural Synthesis Engine"
+    description="Agentic 3D Procedural Synthesis Engine",
+    lifespan=lifespan
 )
+
+# Register API v1 Routers
+app.include_router(auth_router, prefix=settings.API_V1_PREFIX)
+app.include_router(projects_router, prefix=settings.API_V1_PREFIX)
 
 # CORS Middleware
 app.add_middleware(

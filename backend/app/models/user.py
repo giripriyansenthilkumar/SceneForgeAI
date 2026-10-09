@@ -4,8 +4,7 @@ SceneForge AI - User Model
 
 import uuid
 from typing import List
-from sqlalchemy import String, Boolean
-from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy import String, Boolean, Uuid
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from backend.app.models.base import Base, TimestampMixin
 
@@ -13,7 +12,7 @@ class User(Base, TimestampMixin):
     __tablename__ = "users"
 
     id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True),
+        Uuid(as_uuid=True),
         primary_key=True,
         default=uuid.uuid4
     )

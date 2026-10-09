@@ -54,6 +54,7 @@ const DEFAULT_STEPS: AgentStep[] = [
 export function App() {
   const [modelUrl, setModelUrl] = useState<string | null>('/static/exports/test_yacht.glb');
   const [sceneId, setSceneId] = useState<string | null>('scene_initial');
+  const [versionNumber, setVersionNumber] = useState<number>(1);
   const [isGenerating, setIsGenerating] = useState<boolean>(false);
   const [progress, setProgress] = useState<number>(100);
   const [steps, setSteps] = useState<AgentStep[]>(DEFAULT_STEPS);
@@ -107,6 +108,7 @@ export function App() {
 
       if (data.model_url) setModelUrl(data.model_url);
       if (data.scene_id) setSceneId(data.scene_id);
+      setVersionNumber(1);
       if (data.vertex_count) setVertexCount(data.vertex_count);
       if (data.polygons) setPolyCount(data.polygons);
       if (data.specification) setSceneSpec(data.specification);
@@ -157,6 +159,7 @@ export function App() {
         // Cache bust query string so Three.js reloads the updated GLB mesh
         setModelUrl(`${data.model_url}?t=${Date.now()}`);
       }
+      setVersionNumber(prev => prev + 1);
       if (data.vertex_count) setVertexCount(data.vertex_count);
       if (data.polygons) setPolyCount(data.polygons);
       if (data.specification) setSceneSpec(data.specification);
@@ -183,7 +186,11 @@ export function App() {
   return (
     <div className="flex flex-col h-screen w-screen bg-[#0B0F19] text-slate-100 overflow-hidden">
       {/* Top Header */}
-      <Header onExport={handleExport} isGenerating={isGenerating} />
+      <Header
+        onExport={handleExport}
+        isGenerating={isGenerating}
+        versionNumber={versionNumber}
+      />
 
       {/* Main Studio Workspace */}
       <main className="flex-1 p-6 grid grid-cols-1 lg:grid-cols-12 gap-6 min-h-0 overflow-hidden">

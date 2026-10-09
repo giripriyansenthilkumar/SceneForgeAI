@@ -3,8 +3,7 @@ SceneForge AI - Model Export Model
 """
 
 import uuid
-from sqlalchemy import String, BigInteger, ForeignKey
-from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy import String, BigInteger, ForeignKey, Uuid
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from backend.app.models.base import Base, TimestampMixin
 
@@ -12,12 +11,12 @@ class Export(Base, TimestampMixin):
     __tablename__ = "exports"
 
     id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True),
+        Uuid(as_uuid=True),
         primary_key=True,
         default=uuid.uuid4
     )
     scene_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True),
+        Uuid(as_uuid=True),
         ForeignKey("scenes.id", ondelete="CASCADE"),
         nullable=False,
         index=True

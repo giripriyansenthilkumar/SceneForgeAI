@@ -5,8 +5,7 @@ SceneForge AI - Agent Execution & Telemetry Models
 import uuid
 from typing import List, Optional, Dict, Any
 from datetime import datetime
-from sqlalchemy import String, Integer, Text, ForeignKey, DateTime
-from sqlalchemy.dialects.postgresql import UUID, JSONB
+from sqlalchemy import String, Integer, Text, ForeignKey, DateTime, Uuid, JSON
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from backend.app.models.base import Base, TimestampMixin
 
@@ -14,18 +13,18 @@ class AgentRun(Base, TimestampMixin):
     __tablename__ = "agent_runs"
 
     id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True),
+        Uuid(as_uuid=True),
         primary_key=True,
         default=uuid.uuid4
     )
     project_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True),
+        Uuid(as_uuid=True),
         ForeignKey("projects.id", ondelete="CASCADE"),
         nullable=False,
         index=True
     )
     scene_id: Mapped[Optional[uuid.UUID]] = mapped_column(
-        UUID(as_uuid=True),
+        Uuid(as_uuid=True),
         ForeignKey("scenes.id", ondelete="SET NULL"),
         nullable=True
     )
@@ -46,20 +45,20 @@ class AgentAction(Base, TimestampMixin):
     __tablename__ = "agent_actions"
 
     id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True),
+        Uuid(as_uuid=True),
         primary_key=True,
         default=uuid.uuid4
     )
     run_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True),
+        Uuid(as_uuid=True),
         ForeignKey("agent_runs.id", ondelete="CASCADE"),
         nullable=False,
         index=True
     )
     step_number: Mapped[int] = mapped_column(Integer, nullable=False)
     tool_name: Mapped[str] = mapped_column(String(100), nullable=False)
-    tool_arguments: Mapped[Dict[str, Any]] = mapped_column(JSONB, nullable=False)
-    tool_result: Mapped[Optional[Dict[str, Any]]] = mapped_column(JSONB, nullable=True)
+    tool_arguments: Mapped[Dict[str, Any]] = mapped_column(JSON, nullable=False)
+    tool_result: Mapped[Optional[Dict[str, Any]]] = mapped_column(JSON, nullable=True)
     status: Mapped[str] = mapped_column(String(50), nullable=False) # 'SUCCESS', 'VALIDATION_FAILED', etc.
     execution_duration_ms: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
 
