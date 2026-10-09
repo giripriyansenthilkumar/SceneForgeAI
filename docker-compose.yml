@@ -1,0 +1,114 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: sceneforge-postgres
+    restart: always
+    environment:
+      POSTGRES_DB: sceneforge
+      POSTGRES_USER: sceneforge_admin
+      POSTGRES_PASSWORD: sceneforge_secure_dev_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U sceneforge_admin -d sceneforge"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - sceneforge-net
+
+  redis:
+    image: redis:7.4-alpine
+    container_name: sceneforge-redis
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - redisdata:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    networks:
+      - sceneforge-net
+
+  backend:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.backend
+    container_name: sceneforge-backend
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql+asyncpg://sceneforge_admin:sceneforge_secure_dev_password@postgres:5432/sceneforge
+      REDIS_URL: redis://redis:6379/0
+      MCP_SERVER_URL: http://mcp-server:8001
+      STORAGE_DIR: /app/storage
+      JWT_SECRET_KEY: dev_secret_jwt_sceneforge_key_replace_in_prod
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/app/backend
+      - ./shared:/app/shared
+      - ./storage:/app/storage
+    networks:
+      - sceneforge-net
+
+  mcp-server:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.mcp
+    container_name: sceneforge-mcp
+    restart: unless-stopped
+    depends_on:
+      - redis
+    environment:
+      REDIS_URL: redis://redis:6379/0
+      STORAGE_DIR: /app/storage
+      BLENDER_EXECUTABLE: /usr/local/blender/blender
+    ports:
+      - "8001:8001"
+    volumes:
+      - ./mcp-server:/app/mcp-server
+      - ./blender-worker:/app/blender-worker
+      - ./shared:/app/shared
+      - ./storage:/app/storage
+    networks:
+      - sceneforge-net
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: sceneforge-frontend
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - VITE_API_BASE_URL=http://localhost:8000
+      - VITE_WS_BASE_URL=ws://localhost:8000/api/v1/ws
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    networks:
+      - sceneforge-net
+
+volumes:
+  pgdata:
+  redisdata:
+
+networks:
+  sceneforge-net:
+    driver: bridge
