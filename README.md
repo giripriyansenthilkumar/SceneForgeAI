@@ -140,3 +140,4 @@ docker compose up --build
 | **Tool Execution Accuracy** | >95% | **100%** (Automated lifecycle suite) |
 | **Geometry Manifold Rate** | >90% | **100%** (Validated 0 non-manifold edges) |
 | **Unit & Integration Tests** | 100% | **20 / 20 Passed** |
+# SceneForgeAI
